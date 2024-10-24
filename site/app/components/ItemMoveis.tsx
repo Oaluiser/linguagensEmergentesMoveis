@@ -2,10 +2,12 @@ import { useState } from "react"
 import { Modal } from "./modal"
 import Image from "next/image"
 import { useForm } from "react-hook-form"
+import { useClienteStore } from "../context/cliente"
 
 export function ItemMoveis({ product }: { product: any }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const { cliente } = useClienteStore()
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
       name: product.name,
@@ -76,12 +78,14 @@ export function ItemMoveis({ product }: { product: any }) {
             <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-800">{product.name}</h2>
             <p className="mt-4 text-lg text-gray-700 dark:text-gray-600">{product.description}</p>
             <p className="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-800">R$ {product.price.toFixed(2)}</p>
-            <button
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              onClick={handleOpenEditModal}
-            >
-              Editar
-            </button>
+            {cliente ? (
+              <button
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                onClick={handleOpenEditModal}
+              >
+                Editar
+              </button>
+            ) : null}
           </div>
         </div>
       </Modal>
