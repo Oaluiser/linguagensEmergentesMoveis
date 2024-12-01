@@ -4,45 +4,30 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 export async function POST(request: Request) {
-  const body = await request.json()
+  try {
+    const body = await request.json()
+    const { name, email, password } = body
 
-  const hashedPassword = await hashPassword(body.password)
-
-  const user = await prisma.user.create({
-    data: {
-      name: body.name,
-      profile: "Admin",
-      email: body.email,
-      password: hashedPassword
+    if (!name || !email || !password) {
+      return NextResponse.json({ error: "Name, email, and password are required" }, { status: 400 })
     }
-  })
 
-  const token = await generateToken(user.id)
+    const hashedPassword = await hashPassword(password)
 
-  return Response.json({ mensagem: "Admin criado com sucesso.", token }, { status: 201 })
-}
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        profile: "Admin"
+      }
+    })
 
-export async function PATCH(request: Request) {
-  const body = await request.json()
+    const token = await generateToken(user.id)
 
-  const user = await prisma.user.update({
-    where: { id: body.id },
-    data: {
-      name: body.name,
-      email: body.email,
-      password: body.password
-    }
-  })
-
-  return Response.json(user)
-}
-
-export async function DELETE(request: Request) {
-  const body = await request.json()
-
-  const product = await prisma.user.delete({
-    where: { id: body.id }
-  })
-
-  return Response.json(body)
+    return NextResponse.json({ mensagem: "Admin criado com sucesso.", token }, { status: 201 })
+  } catch (error) {
+    console.error("Error creating admin:", error)
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+  }
 }
