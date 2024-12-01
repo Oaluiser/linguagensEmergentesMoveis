@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 import { verifyToken } from "@/lib/auth"
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const authHeader = request.headers.get("Authorization")
 
   if (!authHeader) {
@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
   const token = authHeader.split(" ")[1]
 
   try {
-    verifyToken(token)
+    await verifyToken(token)
     return NextResponse.next()
   } catch (error) {
     console.log("Token verification failed:", error)

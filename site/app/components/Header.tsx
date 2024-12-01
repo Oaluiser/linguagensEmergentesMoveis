@@ -19,9 +19,13 @@ export function Header() {
   }, [cliente])
 
   async function validateClient() {
-    try {
-      const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token")
 
+    if (!token) {
+      return
+    }
+
+    try {
       const response = await fetch(`/api/users/validate`, {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         method: "POST"
