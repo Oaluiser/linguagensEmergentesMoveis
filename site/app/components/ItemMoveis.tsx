@@ -103,6 +103,29 @@ export function ItemMoveis({ product }: { product: any }) {
     }
   }
 
+  const handlePurchase = async () => {
+    try {
+      const token = localStorage.getItem("token")
+
+      const response = await fetch(`/api/orders/one`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ productId: product.id })
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      console.log("Product purchased successfully")
+      window.location.reload()
+    } catch (error) {
+      console.error("Error purchasing product:", error)
+    }
+  }
+
   return (
     <>
       <div
@@ -127,6 +150,14 @@ export function ItemMoveis({ product }: { product: any }) {
             <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-800">{product.name}</h2>
             <p className="mt-4 text-lg text-gray-700 dark:text-gray-600">{product.description}</p>
             <p className="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-800">R$ {product.price.toFixed(2)}</p>
+            {user?.profile == "Cliente" ? (
+              <button
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                onClick={handlePurchase}
+              >
+                Comprar
+              </button>
+            ) : null}
             {user?.profile == "Admin" ? (
               <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
