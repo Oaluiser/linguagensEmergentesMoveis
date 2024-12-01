@@ -29,9 +29,6 @@ export default function Orders() {
         body: JSON.stringify({ orderId })
       })
       if (response.ok) {
-        setOrders((prevOrders) =>
-          prevOrders.map((order) => (order.id === orderId ? { ...order, status: "Aprovado" } : order))
-        )
       } else {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -49,9 +46,6 @@ export default function Orders() {
         body: JSON.stringify({ orderId })
       })
       if (response.ok) {
-        setOrders((prevOrders) =>
-          prevOrders.map((order) => (order.id === orderId ? { ...order, status: "Rejeitado" } : order))
-        )
       } else {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
