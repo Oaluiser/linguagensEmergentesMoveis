@@ -21,5 +21,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/users/validate", "/api/products/count", "/api/orders/count"]
+  matcher: ["/api/products/count", "/api/orders/count", "/api/products/top"]
 }
