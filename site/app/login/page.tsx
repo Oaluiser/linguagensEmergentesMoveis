@@ -21,6 +21,7 @@ export default function Login() {
     if (response.status == 200) {
       const dados = await response.json()
       localStorage.setItem("token", dados.token)
+      window.location.reload()
       router.push("/")
     } else {
       alert("Erro... Login ou Senha incorretos")

@@ -11,16 +11,15 @@ export function middleware(request: NextRequest) {
 
   const token = authHeader.split(" ")[1]
 
-  
   try {
     verifyToken(token)
     return NextResponse.next()
-  } catch(error) {
+  } catch (error) {
     console.log("Token verification failed:", error)
     return NextResponse.json({ mensagem: "Token inválido." }, { status: 403 })
   }
 }
 
 export const config = {
-  matcher: ["/api/users/validate"]
+  matcher: ["/api/users/validate", "/api/products/count", "/api/orders/count"]
 }

@@ -28,7 +28,7 @@ export default function Home() {
       <InputPesquisa onSearch={setProducts} />
       <section className="max-w-screen-xl mx-auto p-4">
         <h1 className="mb-5 mt-3 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-4xl lg:text-5xl dark:text-white text-center">
-          Móveis
+          Móveis{" "}
           <span className="underline underline-offset-3 decoration-8 decoration-orange-400 dark:decoration-orange-600">
             em destaque
           </span>

@@ -1,13 +1,16 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Modal } from "./modal"
 import Image from "next/image"
 import { useForm } from "react-hook-form"
-import { useClienteStore } from "../context/cliente"
+
+interface User {
+  profile: string
+}
 
 export function ItemMoveis({ product }: { product: any }) {
+  const [user, setUser] = useState(null as User | null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const { cliente } = useClienteStore()
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
       name: product.name,
@@ -16,6 +19,33 @@ export function ItemMoveis({ product }: { product: any }) {
       image: product.image
     }
   })
+
+  useEffect(() => {
+    if (!user) {
+      validateClient()
+    }
+  }, [user])
+
+  async function validateClient() {
+    try {
+      const token = localStorage.getItem("token")
+
+      const response = await fetch(`/api/users/validate`, {
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        method: "POST"
+      })
+
+      if (response.status == 200) {
+        const data = await response.json()
+        setUser(data)
+      } else {
+        localStorage.removeItem("clientId")
+      }
+    } catch (error) {
+      console.error("Error validating client:", error)
+      localStorage.removeItem("clientId")
+    }
+  }
 
   const handleOpenModal = () => {
     setIsModalOpen(true)
@@ -31,6 +61,25 @@ export function ItemMoveis({ product }: { product: any }) {
 
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false)
+  }
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/api/products`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id: product.id })
+      })
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      console.log("Product deleted successfully")
+      window.location.reload()
+    } catch (error) {
+      console.error("Error deleting product:", error)
+    }
   }
 
   const onSubmit = async (data: any) => {
@@ -78,12 +127,20 @@ export function ItemMoveis({ product }: { product: any }) {
             <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-800">{product.name}</h2>
             <p className="mt-4 text-lg text-gray-700 dark:text-gray-600">{product.description}</p>
             <p className="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-800">R$ {product.price.toFixed(2)}</p>
-            {cliente ? (
+            {user?.profile == "Admin" ? (
               <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 onClick={handleOpenEditModal}
               >
                 Editar
+              </button>
+            ) : null}
+            {user?.profile == "Admin" ? (
+              <button
+                className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                onClick={handleDelete}
+              >
+                Excluir
               </button>
             ) : null}
           </div>

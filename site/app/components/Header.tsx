@@ -6,10 +6,11 @@ import Link from "next/link"
 
 interface Cliente {
   name: string
+  profile: string
 }
 
 export function Header() {
-  const [cliente, setCliente] = useState(null as Cliente | null)
+  const [cliente, setCliente] = useState<Cliente | null>(null)
 
   useEffect(() => {
     if (!cliente) {
@@ -27,7 +28,6 @@ export function Header() {
       })
 
       if (response.status == 200) {
-        console.log("response: ", response)
         const data = await response.json()
         setCliente(data)
       } else {
@@ -47,11 +47,34 @@ export function Header() {
           <span className="self-center text-3xl font-semibold whitespace-nowrap dark:text-white">Loja de Móveis</span>
         </Link>
         {cliente ? (
-          <span className="text-black dark:text-gray-300">Bem vindo(a), {cliente.name}</span>
+          <span className="text-black dark:text-gray-300">
+            Bem vindo(a), {cliente.name}
+            {cliente?.profile === "Admin" && (
+              <Link href="/adicionar" className="text-white dark:text-gray-300 px-2 ml-2 rounded-xl bg-orange-600">
+                + Adicionar Produto
+              </Link>
+            )}
+            {cliente?.profile === "Admin" && (
+              <Link href="/dashboard" className="text-white dark:text-gray-300 px-2 ml-2 rounded-xl bg-orange-600">
+                Dashboard
+              </Link>
+            )}
+            <button
+              className="text-black dark:text-gray-300 ml-2"
+              onClick={async () => {
+                localStorage.removeItem("token")
+                setCliente(null)
+              }}
+            >
+              | Sair
+            </button>
+          </span>
         ) : (
-          <Link href="/login" className="text-black dark:text-gray-300">
-            Login
-          </Link>
+          <span>
+            <Link href="/login" className="text-black dark:text-gray-300">
+              Login
+            </Link>
+          </span>
         )}
       </div>
     </nav>
