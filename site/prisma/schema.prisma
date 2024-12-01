@@ -19,31 +19,30 @@ model Product {
 }
 
 model User {
-  id        String   @id @default(uuid())
   name      String
   password  String
+  orders    Order[]
   email     String   @unique
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
-  orders    Order[]
+  profile   String   @default("Cliente")
+  id        String   @id @default(uuid())
 }
 
 model Order {
-  id        String         @id @default(uuid())
   userId    String
-  user      User           @relation(fields: [userId], references: [id])
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
   products  OrderProduct[]
+  updatedAt DateTime       @updatedAt
+  createdAt DateTime       @default(now())
+  id        String         @id @default(uuid())
+  user      User           @relation(fields: [userId], references: [id])
 }
 
 model OrderProduct {
+  quantity  Int
   orderId   String
   productId String
-  quantity  Int
-
   order   Order   @relation(fields: [orderId], references: [id])
   product Product @relation(fields: [productId], references: [id])
-
   @@id([orderId, productId])
 }

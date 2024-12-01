@@ -1,35 +1,35 @@
 "use client"
 
-import { useClienteStore } from "../context/cliente"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect } from "react"
+
+interface Cliente {
+  name: string
+}
 
 export function Header() {
-  const { cliente, logaCliente } = useClienteStore()
+  const [cliente, setCliente] = useState(null as Cliente | null)
 
   useEffect(() => {
     if (!cliente) {
-      const clientId = localStorage.getItem("clientId")
-      if (clientId) {
-        validateClient(clientId)
-      }
+      validateClient()
     }
   }, [cliente])
 
-  async function validateClient(clientId: string) {
+  async function validateClient() {
     try {
+      const token = localStorage.getItem("token")
+
       const response = await fetch(`/api/users/validate`, {
-        headers: { "Content-Type": "application/json" },
-        method: "POST",
-        body: JSON.stringify({ id: clientId })
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        method: "POST"
       })
-      if (response.status === 200) {
-        const clientData = await response.json()
-        console.log("Client validated:", clientData)
-        logaCliente(clientData)
-        console.log("Client logged in")
-        console.log("Client data:", clientData)
+
+      if (response.status == 200) {
+        console.log("response: ", response)
+        const data = await response.json()
+        setCliente(data)
       } else {
         localStorage.removeItem("clientId")
       }

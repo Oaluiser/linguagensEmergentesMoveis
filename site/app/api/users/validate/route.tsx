@@ -1,11 +1,15 @@
 import { PrismaClient } from "@prisma/client"
 import { NextResponse } from "next/server"
+import { verifyToken } from "@/lib/auth"
 
 const prisma = new PrismaClient()
 
 export async function POST(req: Request) {
   try {
-    const { id } = await req.json()
+    const authHeader = req.headers.get("Authorization")
+    const token = authHeader!.split(" ")[1]
+    const payload = await verifyToken(token)
+    const { id } = payload
 
     if (!id) {
       return NextResponse.json({ error: "Erro ao Validar cliente" }, { status: 400 })
