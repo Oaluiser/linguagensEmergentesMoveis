@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const { name, email, password } = body
 
     if (!name || !email || !password) {
-      return Response.json({ error: "Name, email, and password are required" }, { status: 400 })
+      return new Response(JSON.stringify({ error: "Name, email, and password are required" }), { status: 400 })
     }
 
     const hashedPassword = await hashPassword(password)
@@ -25,9 +25,9 @@ export async function POST(request: Request) {
 
     const token = await generateToken(user.id)
 
-    return Response.json({ mensagem: "Admin criado com sucesso.", token }, { status: 201 })
+    return new Response(JSON.stringify({ mensagem: "Admin criado com sucesso.", token }), { status: 201 })
   } catch (error) {
     console.error("Error creating admin:", error)
-    return Response.json({ error: "Internal Server Error" }, { status: 500 })
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 })
   }
 }
