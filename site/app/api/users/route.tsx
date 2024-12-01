@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     }
   })
 
-  const token = generateToken(user.id)
+  const token = await generateToken(user.id)
 
   return Response.json({ mensagem: "Usuário criado com sucesso.", token }, { status: 201 })
 }

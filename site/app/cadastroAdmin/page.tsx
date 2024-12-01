@@ -1,7 +1,6 @@
 "use client"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation"
-import { useClienteStore } from "@/app/context/cliente"
 
 type Inputs = {
   nome: string
@@ -11,7 +10,6 @@ type Inputs = {
 
 export default function CadastroAdmin() {
   const { register, handleSubmit } = useForm<Inputs>()
-  const { logaCliente, setClientData, cliente } = useClienteStore()
   const router = useRouter()
 
   async function verificaCadastro(data: Inputs) {
@@ -22,9 +20,7 @@ export default function CadastroAdmin() {
     })
     if (response.status == 201) {
       const dados = await response.json()
-      logaCliente(dados)
-      setClientData({ email: data.email, password: data.senha })
-      localStorage.setItem("clientId", dados.id)
+      localStorage.setItem("token", dados.token)
       router.push("/")
     } else {
       alert("Erro... Não foi possível realizar o cadastro")
