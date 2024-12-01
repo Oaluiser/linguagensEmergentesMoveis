@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const { name, email, password } = body
 
     if (!name || !email || !password) {
-      return NextResponse.json({ error: "Name, email, and password are required" }, { status: 400 })
+      return Response.json({ error: "Name, email, and password are required" }, { status: 400 })
     }
 
     const hashedPassword = await hashPassword(password)
@@ -25,9 +25,9 @@ export async function POST(request: Request) {
 
     const token = await generateToken(user.id)
 
-    return NextResponse.json({ mensagem: "Admin criado com sucesso.", token }, { status: 201 })
+    return Response.json({ mensagem: "Admin criado com sucesso.", token }, { status: 201 })
   } catch (error) {
     console.error("Error creating admin:", error)
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+    return Response.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }
